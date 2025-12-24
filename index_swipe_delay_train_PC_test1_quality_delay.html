@@ -1,22 +1,3 @@
-// --- Rest period logic ---
-function showRestPage(callback) {
-  const restPage = document.getElementById('rest-page');
-  restPage.style.display = 'flex';
-  let seconds = 60;
-  const timerDiv = document.getElementById('rest-timer');
-  timerDiv.textContent = `Time left: ${seconds}s`;
-  const interval = setInterval(() => {
-    seconds--;
-    timerDiv.textContent = `Time left: ${seconds}s`;
-    if (seconds <= 0) {
-      clearInterval(interval);
-      restPage.style.display = 'none';
-      if (callback) callback();
-    }
-  }, 1000);
-}
-// --- Swipe lock until popup appears ---
-let swipeLocked = false;
 // === Playback time per round (ms) ===
 // Example: const VIEW_TIME_MS = [12000, 10000, 15000, ...];
 const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000]; // Set as needed
@@ -119,72 +100,47 @@ const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12
     </div>
   </div>
   <div id="start-page" style="position:fixed;inset:0;width:100vw;height:100dvh;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10000;overflow:auto;">
-    <h1 style="color:#fff;margin-bottom:32px;">Main Evaluation</h1>
-    <!-- ★ 追加テキストここから -->
+    <h1 style="color:#fff;margin-bottom:32px;">Swipe Delay Impact Evaluation</h1>
     <div style="color:#fff;font-size:1.1rem;max-width:90vw;margin-bottom:32px;line-height:1.7;text-align:left;">
-      Please input your name, age, and experience with short video services.<br>
-      Then, click the "START" button to start the main evaluation.<br>
-      <br>
-      <!-- After the evaluation, please download the log file, then upload the log file to the following url:<br>
-        // Show swipe popup after 10s
-        clearTimeout(window._swipePopupTimeout);
-        document.getElementById('swipe-popup').style.display = 'none';        
-        window._swipePopupTimeout = setTimeout(() => {
-          // Only show popup if start page is still hidden
-          if (startPage.style.display === "none") {
-            document.getElementById('swipe-popup').style.display = 'flex';
-          }
-        }, 10000);
-      } else {
-        // Always hide popup if start page is visible
-        clearTimeout(window._swipePopupTimeout);
-        document.getElementById('swipe-popup').style.display = 'none';
-      <a href="https://drive.google.com/drive/folders/1gcJidjtfxKTOjakc0fy3BrnshTZIS3BV?usp=sharing" target="_blank" style="color:#4af;text-decoration:underline;">
-        https://drive.google.com/drive/folders/1gcJidjtfxKTOjakc0fy3BrnshTZIS3BV?usp=sharing
-      </a> -->
+    Goal:
+      This evaluation aims to measure the impact of swipe delay on Quality of Experience in short video service. During the evaluation, you will watch multiple test sample, each consists of a list of six short videos. When a pop-up appears on the right of the video, press the down button on your keyboard to go to next video in the list anytime by swipe down on your screen. Video quality may change when swiping to the next video. At the end of each session, you will be asked to rate the quality of the test sample on a 5-point scale as follows.
+      <ol> 
+        <li>Poor</li> 
+        <li>Bad</li>
+        <li>Fair</li>
+        <li>Good</li>
+        <li>Excellent</li>
+      </ol>
+       
+      
+    Procedure:
+    <ol>
+      <li>Click the "Start Training Session" button below to start a training session. In the training session, you will be showing several test samples in which delay after each video will be displayed. You can also practice choosing score for each test sample. At the end of the training session, you will be directed to the main evaluation. </li>
+      <li> At the beginning of the main evaluation session, you will be asked to provide your name, age, and experience with short video service. The main evaluation session consists of total 41 test samples. The evaluation time is approximately 15 minutes. At the end of the evaluation, please download a log file containing all of your evaluation scores and upload it to the specified drive folder.</li>
+    </ol>
+      
+      <!-- After the evaluation, please download the log file, then upload the log file to the following url:<br> -->
+      <!-- <a href="https://drive.google.com/drive/folders/1gcJidjtfxKTOjakc0fy3BrnshTZIS3BV?usp=sharing" target="_blank" style="color:#4af;text-decoration:underline;"> -->
+        <!-- https://drive.google.com/drive/folders/1gcJidjtfxKTOjakc0fy3BrnshTZIS3BV?usp=sharing -->
+      <!-- </a> -->
       <!-- (Upload URL will be provided after the experiment) -->
       <br>
     </div>
-    <!-- ★ 追加テキストここまで -->
-    <label style="color:#fff;font-size:1.2rem;margin-bottom:8px;" for="name-input">Your Name:</label>
-    <input id="name-input" type="text" required style="font-size:1.2rem;padding:8px 12px;border-radius:8px;border:none;margin-bottom:20px;width:200px;">
-        // Hide popup on swipe
-        clearTimeout(window._swipePopupTimeout);
-        document.getElementById('swipe-popup').style.display = 'none';
-    <label style="color:#fff;font-size:1.2rem;margin-bottom:8px;" for="age-input">Your Age:</label>
-    <input id="age-input" type="number" min="1" max="120" required style="font-size:1.2rem;padding:8px 12px;border-radius:8px;border:none;margin-bottom:20px;width:200px;">
-    <label style="color:#fff;font-size:1.2rem;margin-bottom:8px;" for="exp-input">Experience with short video services (years):</label>
-    <input id="exp-input" type="number" min="0" max="50" step="0.1" required style="font-size:1.2rem;padding:8px 12px;border-radius:8px;border:none;margin-bottom:32px;width:200px;">
-    <button id="start-btn" style="font-size:2rem;padding:16px 48px;border-radius:12px;border:none;background:#ff0000;color:#fff;cursor:pointer;">Start</button>
+    <button id="start-btn" style="font-size:2rem;padding:16px 48px;border-radius:12px;border:none;background:#ff0000;color:#fff;cursor:pointer;">Start Training Session</button>
   </div>
   <div id="shorts-container" style="display:none;">
     <!-- Shorts will be injected here -->
   </div>
   <div id="finish-page" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:20001;flex-direction:column;justify-content:center;align-items:center;">
-    <h1 style="color:#fff;margin-bottom:32px;">Thank you for participating!</h1>
-    <p style="color:#fff;font-size:1.2rem;margin-bottom:32px;">You have finished watching all videos.</p>
-    <button id="download-log-btn-finish" style="font-size:1.2rem;padding:12px 32px;border-radius:8px;border:none;background:#222;color:#fff;cursor:pointer;">Download Log</button>
-    <div style="margin-top:32px;color:#fff;font-size:1.1rem;text-align:center;">
-      Please upload your downloaded log file to:<br>
-      <a href="https://drive.google.com/drive/folders/1gcJidjtfxKTOjakc0fy3BrnshTZIS3BV?usp=sharing" target="_blank" style="color:#4af;text-decoration:underline;">
-        https://drive.google.com/drive/folders/1gcJidjtfxKTOjakc0fy3BrnshTZIS3BV?usp=sharing
-      </a>
-    </div>
-  </div>
-  <!-- Rest period screen -->
-  <div id="rest-page" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:30000;flex-direction:column;justify-content:center;align-items:center;">
-    <h1 style="color:#fff;margin-bottom:32px;">Rest Period</h1>
-    <p style="color:#fff;font-size:1.5rem;">Please take a 3-minute break.<br>After the break, press the resume button below to continue.</p>
-    <div id="rest-timer" style="color:#fff;font-size:2rem;margin-top:24px;"></div>
-    <button id="resume-btn" style="display:none;margin-top:32px;font-size:1.5rem;padding:16px 48px;border-radius:12px;border:none;background:#ff0000;color:#fff;cursor:pointer;">Resume</button>
+    <a href="index_swipe_delay_main_PC_test1_quality_delay.html" style="font-size:2rem;padding:24px 48px;border-radius:16px;background:#ff0000;color:#fff;text-decoration:none;box-shadow:0 2px 16px rgba(0,0,0,0.3);">
+      Go to main evaluation page
+    </a>
   </div>
   <!-- ★ 評価ページを追加 -->
 <div id="score-page" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:20002;flex-direction:column;justify-content:center;align-items:center;">
   <h1 style="color:#fff;margin-bottom:32px;">Voting</h1>
 
-          // Reset popup timer on video change
-          clearTimeout(window._swipePopupTimeout);
-          document.getElementById('swipe-popup').style.display = 'none';
+         
   <!-- ★ 進捗バー追加 -->
   <div id="progress-bar-container" style="width:60vw;max-width:400px;height:24px;background:#222;border-radius:12px;overflow:hidden;margin-bottom:8px;">
     <div id="progress-bar" style="height:100%;width:0%;background:#ff0000;transition:width 0.4s;"></div>
@@ -205,30 +161,6 @@ const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12
 
   <script>
     // --- Logging utility ---
-
-    // --- Rest period logic (moved here for scope) ---
-    function showRestPage(callback) {
-      const restPage = document.getElementById('rest-page');
-      const resumeBtn = document.getElementById('resume-btn');
-      restPage.style.display = 'flex';
-      resumeBtn.style.display = 'none';
-      let seconds = 60*3;
-      const timerDiv = document.getElementById('rest-timer');
-      timerDiv.textContent = `Time left: ${seconds}s`;
-      const interval = setInterval(() => {
-        seconds--;
-        timerDiv.textContent = `Time left: ${seconds}s`;
-        if (seconds <= 0) {
-          clearInterval(interval);
-          resumeBtn.style.display = 'block';
-          resumeBtn.onclick = function() {
-            restPage.style.display = 'none';
-            resumeBtn.style.display = 'none';
-            if (callback) callback();
-          };
-        }
-      }, 1000);
-    }
     const logBuffer = [];
     function logAndBuffer(...args) {
       logBuffer.push(args.map(String).join(' '));
@@ -239,12 +171,11 @@ const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12
     const startPage = document.getElementById('start-page');
     const shortsContainer = document.getElementById('shorts-container');
     const finishPage = document.getElementById('finish-page');
-    const downloadLogBtnFinish = document.getElementById('download-log-btn-finish');
+    // const downloadLogBtnFinish = document.getElementById('download-log-btn-finish');
     let userName = ""; // Store user name for log file
 
 
     let evaluationCount = 0;
-    //phong modify
     // var video_path = "video_JP/"
     const RES_PATHS = {
       "720p":  "./video_resolution/720p/",
@@ -255,7 +186,6 @@ const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12
       "120p":  "./video_resolution/120p/",
       "96p":  "./video_resolution/96p/"
     };
-
 // --- Video file list (replace with your server video URLs) ---
 //     const videoList = [
 //   { title: "Video 1", src: video_path+"1.mp4" },
@@ -501,132 +431,24 @@ const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12
 
    let VIDEO_SWITCH_DELAYS = [
     [0,	0,	0,	0,	0,	0],
-    [0,	0,	0,	2000,	2000,	0],
-    [0,	0,	0,	4000,	4000,	0],
-    [0,	0,	0,	8000,	8000,	0],
-    [2000,	0,	0,	0,	0,	0],
-    [8000,	0,	0,	0,	0,	0],
-    [16000,	0,	0,	0,	0,	0],
+    [0,	0,	0, 0,	0, 0],
     [0,	0,	0,	0,	0,	0],
-    [0,	0,	0,	0,	4000,	0],
-    [0,	0,	0,	0,	8000,	0],
-    [0,	0,	0,	0,	16000,	0],
-    [4000,	0,	0,	0,	0,	0],
-    [8000,	0,	0,	0,	0,	0],
-    [16000,	0,	0,	0,	0,	0],
     [0,	0,	0,	0,	0,	0],
-    [0,	0,	0,	0,	4000,	0],
-    [0,	0,	0,	0,	8000,	0],
-    [0,	0,	0,	0,	16000,	0],
-    [4000,	0,	0,	0,	0,	0],
-    [8000,	0,	0,	0,	0,	0],
-    [16000,	0,	0,	0,	0,	0],
-    [0,	0,	0,	0,	0,	0],
-    [0,	0,	0,	0,	4000,	0],
-    [0,	0,	0,	0,	8000,	0],
-    [0,	0,	0,	0,	16000,	0],
-    [4000,	0,	0,	0,	0,	0],
-    [8000,	0,	0,	0,	0,	0],
-    [16000,	0,	0,	0,	0,	0]
+    ];
+
+    let VIDEO_RESOLUTIONS = [
+      ["720p", "720p", "720p", "720p", "720p", "720p"],
+      ["720p", "96p", "720p", "720p", "720p", "720p"], 
+      ["720p", "720p", "720p", "720p", "720p", "96p"],
+      ["720p", "144p", "96p", "720p", "720p", "720p"],
     ];
     // let VIEW_TIME_MS = [5000,5000,5000,5000,5000,5000,50000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 20000, 20000, 20000, 20000, 20000, 20000, 20000]; // 各動画の視聴時間（ミリ秒）
-    let VIEW_TIME_MS = [2000,2000,2000,2000,2000,2000,2000, 4000, 4000, 4000, 4000, 4000,4000, 4000, 8000, 8000, 8000, 8000, 8000, 8000, 8000, 16000, 16000, 16000, 16000, 16000, 16000, 16000]; // 各動画の視聴時間（ミリ秒）
-    
-    // let TEST_SAMPLE = [
-    // [1,[0,	0,	0,	0,	0,	0], 2000],
-    // [2,[1000,	1000,	1000,	1000,	0,	0], 2000],
-    // [3,[0,	1000,	1000,	1000,	1000,	0], 2000],
-    // [4,[2000,	2000,	2000,	2000,	0,	0], 2000],
-    // [5,[0,	2000,	2000,	2000,	2000,	0],2000],
-    // [6,[4000,	4000,	4000,	4000,	0,	0], 2000],
-    // [7,[0,	4000,	4000,	4000,	4000,	0], 2000],
-    // [8,[0,	0,	0,	0,	0,	0], 4000],
-    // [9, [1000,	1000,	1000,	1000,	0,	0], 4000],
-    // [10,[0,	1000,	1000,	1000,	1000,	0], 4000],
-    // [11,[2000,	2000,	2000,	2000,	0,	0], 4000],
-    // [12,[0,	2000,	2000,	2000,	2000,	0],4000],
-    // [13,[4000,	4000,	4000,	4000,	0,	0], 4000],
-    // [14,[0,	4000,	4000,	4000,	4000,	0], 4000],
-    // [15,[0,	0,	0,	0,	0,	0], 8000],
-    // [16,[1000,	1000,	1000,	1000,	0,	0], 8000],
-    // [17,[0,	1000,	1000,	1000,	1000,	0], 8000],
-    // [18,[2000,	2000,	2000,	2000,	0,	0], 8000],
-    // [19,[0,	2000,	2000,	2000,	2000,	0],8000],
-    // [20,[4000,	4000,	4000,	4000,	0,	0], 8000],
-    // [21,[0,	4000,	4000,	4000,	4000,	0], 8000],
-    // [22,[0,	0,	0,	0,	0,	0], 16000],
-    // [23,[1000,	1000,	1000,	1000,	0,	0], 16000],
-    // [24,[0,	1000,	1000,	1000,	1000,	0], 16000],
-    // [25,[2000,	2000,	2000,	2000,	0,	0], 16000],
-    // [26,[0,	2000,	2000,	2000,	2000,	0],16000],
-    // [27,[4000,	4000,	4000,	4000,	0,	0], 16000],
-    // [28,[0,	4000,	4000,	4000,	4000,	0], 16000],
-    // ];
-
-    // [ID, Resolutions, ViewTime, Delays]
-    let TEST_SAMPLE = [
-    [1, ["720p", "720p", "720p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [2, ["720p", "480p", "720p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [3, ["720p", "720p", "720p", "720p", "720p", "480p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [4, ["720p", "360p", "720p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [5, ["720p", "720p", "720p", "720p", "720p", "360p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [6, ["720p", "240p", "720p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [7, ["720p", "720p", "720p", "720p", "720p", "240p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [8, ["720p", "144p", "720p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [9, ["720p", "720p", "720p", "720p", "720p", "144p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [10, ["720p", "96p", "720p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [11, ["720p", "720p", "720p", "720p", "720p", "96p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [12, ["720p", "480p", "480p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [13, ["720p", "720p", "720p", "720p", "480p", "480p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [14, ["720p", "360p", "360p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [15, ["720p", "720p", "720p", "720p", "360p", "360p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [16, ["720p", "240p", "240p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [17, ["720p", "720p", "720p", "720p", "240p", "240p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [18, ["720p", "144p", "144p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [19, ["720p", "720p", "720p", "720p", "144p", "144p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [20, ["720p", "96p", "96p", "720p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    // [21, ["720p", "720p", "720p", "720p", "96p", "96p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [2, ["720p", "480p", "480p", "480p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [3, ["720p", "720p", "720p", "480p", "480p", "480p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [4, ["720p", "360p", "360p", "360p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [5, ["720p", "720p", "720p", "360p", "360p", "360p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [6, ["720p", "240p", "240p", "240p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [7, ["720p", "720p", "720p", "240p", "240p", "240p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [8, ["720p", "144p", "144p", "144p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [9, ["720p", "720p", "720p", "144p", "144p", "144p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [10, ["720p", "96p", "96p", "96p", "720p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [11, ["720p", "720p", "720p", "96p", "96p", "96p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [12, ["720p", "480p", "480p", "480p", "480p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [13, ["720p", "720p", "480p", "480p", "480p", "480p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [14, ["720p", "360p", "360p", "360p", "360p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [15, ["720p", "720p", "360p", "360p", "360p", "360p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [16, ["720p", "240p", "240p", "240p", "240p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [17, ["720p", "720p", "240p", "240p", "240p", "240p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [18, ["720p", "144p", "144p", "144p", "144p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [19, ["720p", "720p", "144p", "144p", "144p", "144p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [20, ["720p", "96p", "96p", "96p", "96p", "720p"], 8000, [0, 0, 0, 0, 0, 0]],
-    [21, ["720p", "720p", "96p", "96p", "96p", "96p"], 8000, [0, 0, 0, 0, 0, 0]],
-    ];
-     let test_id_list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    // get test_id_list from URL parameter "test_ids", e.g., ?test_ids=1,5,6,7
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('test_ids')) {
-      const test_ids_param = urlParams.get('test_ids');
-      test_id_list = test_ids_param.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id) && id >= 1 && id <= TEST_SAMPLE.length);
-    }
-    console.log('Test ID list from URL or default:', test_id_list);
-    let selected_test_samples = TEST_SAMPLE.filter((_, idx) => test_id_list.includes(idx+1));
-    // shuffle selected_test_samples
-    for (let i = selected_test_samples.length - 1; i > 0; i--) {
-     const j = Math.floor(Math.random() * (i + 1));
-     [selected_test_samples[i], selected_test_samples[j]] = [selected_test_samples[j], selected_test_samples[i]];
-    }
-    console.log('Selected test samples:', selected_test_samples);
+    let VIEW_TIME_MS = [4000, 4000, 4000, 4000]; // 各動画の視聴時間（ミリ秒）
 
     const DEFAULT_DELAY = 1000;
     let delaysLoaded = true;
-    // let EVALUATION_REPEAT = VIDEO_SWITCH_DELAYS.length || 1; // デフォルト値を設定
-    let EVALUATION_REPEAT = selected_test_samples.length ; // デフォルト値を設定
+    let EVALUATION_REPEAT = VIDEO_SWITCH_DELAYS.length || 1; // デフォルト値を設定
+    // let EVALUATION_REPEAT = 1 ; // デフォルト値を設定
     console.log('EVALUATION_REPEAT:', EVALUATION_REPEAT);
 
     function shuffleRowsInSync(arr1, arr2) {
@@ -666,14 +488,10 @@ const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12
       return arr.reduce((a, b) => a + b, 0);
     }
     // shuffleRowsInSync(PREDEFINED_VIDEO_INDEXES, VIDEO_SWITCH_DELAYS);
-    
-    // select a subset of test samples from TEST_SAMPLE based on pattern_id_list
-
-
     // shuffleRowsInSync(VIDEO_SWITCH_DELAYS, VIEW_TIME_MS);
-    // console.log('Loaded video switch delays:', VIDEO_SWITCH_DELAYS.length, [VIDEO_SWITCH_DELAYS, VIEW_TIME_MS], PREDEFINED_VIDEO_INDEXES);
-    // total_view_time_ms = sum(VIEW_TIME_MS)*6 + sum(VIDEO_SWITCH_DELAYS.flat());
-    // console.log('Total estimated view time(mins):',sum(VIEW_TIME_MS), total_view_time_ms/1000/60);
+    console.log('Loaded video switch delays:', VIDEO_SWITCH_DELAYS.length, [VIDEO_SWITCH_DELAYS, VIEW_TIME_MS], PREDEFINED_VIDEO_INDEXES);
+    total_view_time_ms = sum(VIEW_TIME_MS)*6 + sum(VIDEO_SWITCH_DELAYS.flat());
+    console.log('Total estimated view time(mins):',sum(VIEW_TIME_MS), total_view_time_ms/1000/60);
     function waitForAllVideosLoaded(videoList, callback) {
       let loadedCount = 0;
       const total = videoList.length;
@@ -746,20 +564,19 @@ const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12
     clearTimeout(window._swipePopupTimeout);
     document.getElementById('swipe-popup').style.display = 'none';
       // Get name, age and experience values
-      const name = document.getElementById('name-input').value.trim();
-      const age = document.getElementById('age-input').value.trim();
-      const exp = document.getElementById('exp-input').value.trim();
+      //const name = document.getElementById('name-input').value.trim();
+      // const age = document.getElementById('age-input').value.trim();
+      // const exp = document.getElementById('exp-input').value.trim();
 
-      // 入力チェック：いずれかが空なら進まない
-      if (!name || !age || !exp) {
-        alert('Please input your name, age, and experience before starting.');
-        return;
-      }
+      // // 入力チェック：いずれかが空なら進まない
+      // if ( !age || !exp) {
+      //   alert('Please input your name, age, and experience before starting.');
+      //   return;
+      // }
 
-      userName = name || "user";
-      logAndBuffer('User Name:', name);
-      logAndBuffer('User Age:', age);
-      logAndBuffer('Experience (years):', exp);
+      // //userName = name || "user";
+      // logAndBuffer('User Age:', age);
+      // logAndBuffer('Experience (years):', exp);
       startPage.style.display = 'none';
       shortsContainer.style.display = '';
 
@@ -770,7 +587,7 @@ const VIEW_TIME_MS = [12000, 12000, 12000, 12000, 12000, 12000, 12000, 12000, 12
     };
 
    
-// phong modify
+
 function getCurrentDelay() {
   // currentIndexが範囲外の場合はデフォルト値
   //return VIDEO_SWITCH_DELAYS[currentIndex] || 1000;
@@ -778,32 +595,13 @@ function getCurrentDelay() {
   // ラウンドと動画インデックスで遅延を取得
   const round = evaluationCount;
   if (
-    selected_test_samples[round][3] &&
-    typeof selected_test_samples[round][3][currentIndex] === 'number'
+    VIDEO_SWITCH_DELAYS[round] &&
+    typeof VIDEO_SWITCH_DELAYS[round][currentIndex] === 'number'
   ) {
-    return selected_test_samples[round][3][currentIndex];
+    return VIDEO_SWITCH_DELAYS[round][currentIndex];
   }
   return DEFAULT_DELAY;
 }
-// function getCurrentDelay() {
-//   const round = evaluationCount;
-//   // Check if we have data for this round
-//   if (selected_test_samples[round]) {
-//     // In your TEST_SAMPLE structure: 
-//     // [ID, [Resolutions], Round_View_Time]
-//     // We need to match this against VIDEO_SWITCH_DELAYS using the ID
-//     const testID = selected_test_samples[round][0];
-    
-//     // Find the corresponding delay pattern from VIDEO_SWITCH_DELAYS
-//     // Subtract 1 because your IDs start at 1 but arrays start at 0
-//     const delayPattern = VIDEO_SWITCH_DELAYS[testID - 1];
-    
-//     if (delayPattern && typeof delayPattern[currentIndex] === 'number') {
-//       return delayPattern[currentIndex];
-//     }
-//   }
-//   return 0; 
-// }
 
 // GIF overlay for simulating delay
 const gifOverlay = document.createElement('div');
@@ -850,7 +648,7 @@ document.body.appendChild(gifOverlay);
               const video = shorts[currentIndex].querySelector('video');
               if (video) {
                 video.currentTime = 0;
-                video.muted = false;
+                video.muted = true;
                 video.play();
               }
             }, delay);
@@ -859,7 +657,7 @@ document.body.appendChild(gifOverlay);
             const video = shorts[currentIndex].querySelector('video');
             if (video) {
               video.currentTime = 0;
-              video.muted = false;
+              video.muted = true;
               video.play();
             }
           }
@@ -874,7 +672,7 @@ document.body.appendChild(gifOverlay);
               const video = shorts[currentIndex].querySelector('video');
               if (video) {
                 video.currentTime = 0;
-                video.muted = false;
+                video.muted = true;
                 video.play();
               }
             }, delay);
@@ -883,7 +681,7 @@ document.body.appendChild(gifOverlay);
             const video = shorts[currentIndex].querySelector('video');
             if (video) {
               video.currentTime = 0;
-              video.muted = false;
+              video.muted = true;
               video.play();
             }
           }
@@ -934,10 +732,10 @@ function restartPlayback() {
   updateShorts();
 
   // Set playback time for this round from VIEW_TIME_MS array
-  let roundViewTime = Array.isArray(selected_test_samples) ? selected_test_samples[evaluationCount][2] : undefined;
+  let roundViewTime = Array.isArray(VIEW_TIME_MS) ? VIEW_TIME_MS[evaluationCount] : undefined;
   if (typeof roundViewTime === 'number' && !isNaN(roundViewTime)) {
     logAndBuffer(`VIEW_TIME_MS for round ${evaluationCount + 1}: ${roundViewTime}`);
-    logAndBuffer(selected_test_samples[evaluationCount][1]);
+    logAndBuffer(VIDEO_SWITCH_DELAYS[evaluationCount]);
   } else {
     logAndBuffer(`VIEW_TIME_MS for round ${evaluationCount + 1}: (undefined)`);
   }
@@ -1013,32 +811,18 @@ scoreForm.onsubmit = function(e) {
 
   // ★ 各評価ごとに遅延パターンをログに記録
   if (
-    Array.isArray(selected_test_samples[evaluationCount][1]) &&
-    selected_test_samples[evaluationCount][1].length > 0
+    Array.isArray(VIDEO_SWITCH_DELAYS[evaluationCount]) &&
+    VIDEO_SWITCH_DELAYS[evaluationCount].length > 0
   ) {
     logAndBuffer(
-      `Delay pattern [${evaluationCount + 1}回目]: id=${selected_test_samples[evaluationCount][0]}`,
-      selected_test_samples[evaluationCount][3].join(',')
+      `Delay pattern [${evaluationCount + 1}回目]:`,
+      VIDEO_SWITCH_DELAYS[evaluationCount].join(',')
     );
   }
 
   evaluationCount++;
   logAndBuffer(`ACR Score [${evaluationCount}]:`, acr);
   scoreForm.reset();
-
-
-  // Show a 3-minute rest page and countdown ONLY after the fourteenth evaluation (not before or after any other round)
-  if (evaluationCount === 14) {
-    scorePage.style.display = 'none';
-    // Show rest page and after countdown, continue to next round
-    showRestPage(() => {
-      restartPlayback();
-      setTimeout(() => {
-        playCurrentVideo();
-      }, 0);
-    });
-    return;
-  }
 
   if (evaluationCount < EVALUATION_REPEAT) {
     // もう一度再生＋評価サイクル
@@ -1054,25 +838,20 @@ scoreForm.onsubmit = function(e) {
   }
 };
 
-    downloadLogBtnFinish.onclick = function() {
-  const safeName = userName.replace(/[^a-zA-Z0-9_\-]/g, "_");
-  // 現在日時をYYYYMMDD_HHMMSS形式で取得
-  const now = new Date();
-  const pad = n => n.toString().padStart(2, '0');
-  const dateStr = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-  const blob = new Blob([logBuffer.join('\n')], {type: 'text/plain'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  // phong modify
-  if(test_id_list.length < TEST_SAMPLE.length) {
-    a.download = `log_test1_quality_delay_re_${safeName}_${dateStr}.txt`;
-  } else {
-    a.download = `log_test1_quality_delay_${safeName}_${dateStr}.txt`;
-  }
-  a.click();
-  URL.revokeObjectURL(url);
-};
+//     downloadLogBtnFinish.onclick = function() {
+//   const safeName = userName.replace(/[^a-zA-Z0-9_\-]/g, "_");
+//   // 現在日時をYYYYMMDD_HHMMSS形式で取得
+//   const now = new Date();
+//   const pad = n => n.toString().padStart(2, '0');
+//   const dateStr = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+//   const blob = new Blob([logBuffer.join('\n')], {type: 'text/plain'});
+//   const url = URL.createObjectURL(blob);
+//   const a = document.createElement('a');
+//   a.href = url;
+//   a.download = `log_${safeName}_${dateStr}.txt`;
+//   a.click();
+//   URL.revokeObjectURL(url);
+// };
 
 // Usage:
 //shuffleRowsInSync(PREDEFINED_VIDEO_INDEXES, VIDEO_SWITCH_DELAYS);
@@ -1094,36 +873,39 @@ scoreForm.onsubmit = function(e) {
 // }
 
 // --- 評価ごとに事前定義リストから動画を取得 ---
-// phong modify
 // function getPredefinedVideos(round) {
 //   console.log('Getting predefined videos for round:', round,PREDEFINED_VIDEO_INDEXES.length);
 //   const indexes = PREDEFINED_VIDEO_INDEXES[round % PREDEFINED_VIDEO_INDEXES.length];
 //   console.log('Using video indexes:', indexes);
 //   return indexes.map(i => videoList[i]);
 // }
-function getPredefinedVideos(round) {
-  // 1. Get the list of Video IDs for this round (e.g., 91, 112, 115...)
-  const indexes = PREDEFINED_VIDEO_INDEXES[round % PREDEFINED_VIDEO_INDEXES.length];
-  
-  // 2. Get the list of Resolutions for this round (e.g., "720p", "360p"...)
-  // We use safe access (?) just in case the round data is missing
-  const resolutions = selected_test_samples[round] ? selected_test_samples[round][1] : [];
 
-  // 3. Generate the file paths
-  return indexes.map((vidIndex, i) => {
-    // Get resolution for this specific video (default to '720p' if missing)
-    const resKey = resolutions[i] || "720p"; 
-    
-    // Look up the folder path (e.g., "./video_resolution/720p/")
-    const folderPath = RES_PATHS[resKey];
+// --- Get videos for the current round with specific resolutions ---
+    function getPredefinedVideos(round) {
+      // 1. Get the list of Video IDs for this round
+      // Use modulo (%) to loop if round number exceeds array length
+      const indexes = PREDEFINED_VIDEO_INDEXES[round % PREDEFINED_VIDEO_INDEXES.length];
+      
+      // 2. Get the list of Resolutions for this round
+      const resolutions = VIDEO_RESOLUTIONS[round % VIDEO_RESOLUTIONS.length];
 
-    return { 
-      title: `Video ${vidIndex+1}`, 
-      // Construct the full path: ./video_resolution/720p/91.mp4
-      src: `${folderPath}${vidIndex+1}.mp4` 
-    };
-  });
-}
+      console.log(`Loading Round ${round + 1}:`, indexes, resolutions);
+
+      // 3. Map them to file paths
+      return indexes.map((vidIndex, i) => {
+        // Get resolution (default to 720p if missing)
+        const resKey = (resolutions && resolutions[i]) ? resolutions[i] : "720p";
+        
+        // Get folder path (e.g., "./video_resolution/720p/")
+        const folderPath = RES_PATHS[resKey];
+
+        return { 
+          title: `Video ${vidIndex+1}`, 
+          // Construct path: ./video_resolution/720p/90.mp4
+          src: `${folderPath}${vidIndex+1}.mp4` 
+        };
+      });
+    }
 
 // 起動時にCSVから読み込む（例: video_id_lists.csv）
 // loadVideoIndexesFromCSV('video_id_lists.csv');
@@ -1158,15 +940,8 @@ let playStart = Date.now();
 function logPlayTime(index) {
   const now = Date.now();
   playTimes[index] += now - playStart;
-  // If this is the last video in the round, force play time to 1000ms
-  const isLastVideo = (index === playTimes.length - 1);
-  let playTimeToLog = playTimes[index];
-  // if (isLastVideo) {
-  //   playTimeToLog = 1000;
-  //   playTimes[index] = 1000;
-  // }
   logAndBuffer(
-    `Video ${index} (${PREDEFINED_VIDEO_INDEXES[evaluationCount][index]}) play time: ${playTimeToLog / 1000}s`
+    `Video ${index} (${PREDEFINED_VIDEO_INDEXES[evaluationCount][index]}) play time: ${playTimes[index] / 1000}s`
   );
   playStart = now;
 }
@@ -1278,12 +1053,12 @@ document.addEventListener('mouseup', (e) => {
         const video = short.querySelector('video');
         if (index === currentIndex) {
           video.currentTime = 0;
-          video.muted = false; // Unmute the current video
+          video.muted = true; // Unmute the current video
 
           // スマホ自動再生対策: ユーザー操作イベントで再生
           // 直前のtouchend/mouseupで video.play() を呼ぶ
           //video.onclick = () => {
-          //  //video.muted = false;
+          //  video.muted = true;
           //  video.play();
           //};
 
@@ -1301,92 +1076,42 @@ document.addEventListener('mouseup', (e) => {
     }
 
     // --- スマホで自動再生するためのイベントフック ---
-    // Phong modify
-// function playCurrentVideo() {
-//   const video = shorts[currentIndex]?.querySelector('video');
-//   // Get playback time for this round
-//   let roundViewTime = Array.isArray(VIEW_TIME_MS) ? selected_test_samples[evaluationCount][2] : undefined;
-//   if (video) {
-//     //video.muted = false;
-//     video.play().catch(() => {});
-//     // Only show popup if not on start/finish/score page
-//     if (
-//       startPage.style.display === "none" &&
-//       finishPage.style.display === "none" &&
-//       (typeof scorePage === 'undefined' || scorePage.style.display === "none")
-//     ) {
-//       clearTimeout(window._swipePopupTimeout);
-//       document.getElementById('swipe-popup').style.display = 'none';
-//       // Lock swipe until popup appears
-//       swipeLocked = true;
-//       // If this is the last video in the round, auto-advance after 1000ms but do NOT show popup
-//       if (currentIndex === shorts.length - 1) {
-//         clearTimeout(window._videoPlaybackTimeout);
-//         window._videoPlaybackTimeout = setTimeout(() => {
-//           logPlayTime(currentIndex);
-//           showFinishPage();
-//         }, 1000);
-//         // Do not unlock swipe for last video
-//       } else if (typeof roundViewTime === 'number' && !isNaN(roundViewTime)) {
-//         window._swipePopupTimeout = setTimeout(() => {
-//           document.getElementById('swipe-popup').style.display = 'flex';
-//           swipeLocked = false;
-//         }, roundViewTime);
-//       }
-//     }
-//     // Remove any previous auto-advance timeout (already handled above)
-//   }
-// }
 function playCurrentVideo() {
   const video = shorts[currentIndex]?.querySelector('video');
-  
   // Get playback time for this round
-  let roundViewTime = Array.isArray(selected_test_samples) 
-    ? selected_test_samples[evaluationCount][2] 
-    : undefined;
-
+  let roundViewTime = Array.isArray(VIEW_TIME_MS) ? VIEW_TIME_MS[evaluationCount] : undefined;
   if (video) {
-    // Play the video (catch error for browsers that block autoplay)
+    video.muted = true;
     video.play().catch(() => {});
-
-    // Only run logic if we are strictly in the "viewing" mode 
-    // (not on Start, Finish, or Score pages)
+    // Only show popup if not on start/finish/score page
     if (
       startPage.style.display === "none" &&
       finishPage.style.display === "none" &&
       (typeof scorePage === 'undefined' || scorePage.style.display === "none")
     ) {
-      // 1. Reset: Hide popup and clear old timers
       clearTimeout(window._swipePopupTimeout);
-      clearTimeout(window._videoPlaybackTimeout); // Clear the old auto-swipe timer
       document.getElementById('swipe-popup').style.display = 'none';
-      
-      // 2. Lock swipe immediately
-      swipeLocked = true;
-
-      // 3. Set timer to unlock swipe and show popup after roundViewTime
-      // This now applies to ALL videos, including the last one.
       if (typeof roundViewTime === 'number' && !isNaN(roundViewTime)) {
         window._swipePopupTimeout = setTimeout(() => {
           document.getElementById('swipe-popup').style.display = 'flex';
-          swipeLocked = false; // User can now swipe manually
         }, roundViewTime);
       }
     }
+    // Remove any previous auto-advance timeout
+    clearTimeout(window._videoPlaybackTimeout);
   }
 }
+
 // touchend/mouseupで次動画に切り替えた直後に再生
 function handleSwipe(deltaY) {
-  // Prevent swipe if locked
-  if (swipeLocked) return;
-  // Hide popup on swipe
-  clearTimeout(window._swipePopupTimeout);
-  document.getElementById('swipe-popup').style.display = 'none';
-  if (isTouch) {
-    deltaY = -deltaY;
-  } else if (mouseDown) {
-    deltaY = -deltaY;
-  }
+      // Hide popup on swipe
+      clearTimeout(window._swipePopupTimeout);
+      document.getElementById('swipe-popup').style.display = 'none';
+      if (isTouch) {
+        deltaY = -deltaY;
+      } else if (mouseDown) {
+        deltaY = -deltaY;
+      }
   if (Math.abs(deltaY) > 5) {
     const delay = getCurrentDelay();
     if (deltaY < 0 && currentIndex < shorts.length - 1) {
