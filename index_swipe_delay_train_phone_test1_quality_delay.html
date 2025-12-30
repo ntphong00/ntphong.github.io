@@ -661,7 +661,7 @@ document.addEventListener('mouseup', (e) => {
         const video = short.querySelector('video');
         if (index === currentIndex) {
           video.currentTime = 0;
-          video.muted = false; // Unmute the current video
+          video.muted = true; // Unmute the current video
 
           // スマホ自動再生対策: ユーザー操作イベントで再生
           // 直前のtouchend/mouseupで video.play() を呼ぶ
