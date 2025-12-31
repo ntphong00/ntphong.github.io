@@ -661,7 +661,7 @@ document.addEventListener('mouseup', (e) => {
         const video = short.querySelector('video');
         if (index === currentIndex) {
           video.currentTime = 0;
-          video.muted = false; // Unmute the current video
+          // video.muted = false; // Unmute the current video
 
           // スマホ自動再生対策: ユーザー操作イベントで再生
           // 直前のtouchend/mouseupで video.play() を呼ぶ
@@ -690,8 +690,29 @@ function playCurrentVideo() {
   let roundViewTime = Array.isArray(VIEW_TIME_MS) ? VIEW_TIME_MS[evaluationCount] : undefined;
   
   if (video) {
-    video.play().catch(() => {});
+    // FIX FOR IPHONE:
+    // 1. Ensure video is muted so the browser allows autoplay to start
+    video.muted = true;
     
+    // 2. Play the video
+    var playPromise = video.play();
+
+    if (playPromise !== undefined) {
+      playPromise.then(_ => {
+        // Automatic playback started!
+        // 3. NOW try to unmute. 
+        // Note: On iOS, if this is running inside setTimeout, this might fail 
+        // or stay muted. But at least the video is moving.
+        video.muted = false;
+      })
+      .catch(error => {
+        // Auto-play was prevented.
+        console.log("Autoplay blocked. Trying to force muted playback.", error);
+        video.muted = true;
+        video.play();
+      });
+    }
+
     // Only show popup if not on start/finish/score page
     if (
       startPage.style.display === "none" &&
