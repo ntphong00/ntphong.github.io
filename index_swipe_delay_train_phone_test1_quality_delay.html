@@ -228,10 +228,10 @@
     ];
 
    let VIDEO_SWITCH_DELAYS = [
-    [0, 0,  0,  0,  0,  0],
-    [0, 0,  0, 0, 0, 0],
-    [0, 0,  0,  0,  0,  0],
-    [0, 0,  0,  0,  0,  0],
+    [0, 1000,  0,  0,  1000,  0],
+    [0, 0,  1000, 0, 0, 0],
+    [0, 2000,  0,  0,  2000,  0],
+    [0, 0,  0,  1000,  0,  0],
     ];
 
     let VIDEO_RESOLUTIONS = [
@@ -690,29 +690,38 @@ function playCurrentVideo() {
   let roundViewTime = Array.isArray(VIEW_TIME_MS) ? VIEW_TIME_MS[evaluationCount] : undefined;
   
   if (video) {
-    // FIX FOR IPHONE:
-    // 1. Ensure video is muted so the browser allows autoplay to start
-    video.muted = true;
+    // 1. Strict Mute for iOS
+    video.muted = true; 
     
-    // 2. Play the video
+    // 2. Play
     var playPromise = video.play();
 
     if (playPromise !== undefined) {
       playPromise.then(_ => {
-        // Automatic playback started!
-        // 3. NOW try to unmute. 
-        // Note: On iOS, if this is running inside setTimeout, this might fail 
-        // or stay muted. But at least the video is moving.
+        // Playback started successfully!
+        // Try to unmute (might fail on iOS if delay > 0, but video will run)
         video.muted = false;
+        
+        console.log("Video playing successfully");
       })
       .catch(error => {
-        // Auto-play was prevented.
-        console.log("Autoplay blocked. Trying to force muted playback.", error);
+        console.log("Autoplay blocked/failed. Forcing mute play.", error);
+        // Fallback: Ensure muted and try again
         video.muted = true;
         video.play();
       });
     }
 
+    // Double check: if still paused after a tiny moment, force it
+    setTimeout(() => {
+        if (video.paused) {
+            console.log("Force kickstarting video...");
+            video.muted = true;
+            video.play();
+        }
+    }, 50);
+
+    // --- POPUP LOGIC ---
     // Only show popup if not on start/finish/score page
     if (
       startPage.style.display === "none" &&
@@ -738,6 +747,7 @@ function playCurrentVideo() {
 }
 
 // touchend/mouseupで次動画に切り替えた直後に再生
+// touchend/mouseupで次動画に切り替えた直後に再生
 function handleSwipe(deltaY) {
   // Prevent swipe if locked
   if (swipeLocked) return;
@@ -751,46 +761,76 @@ function handleSwipe(deltaY) {
   } else if (mouseDown) {
     deltaY = -deltaY;
   }
+
+  // --- START SWIPE LOGIC ---
   if (Math.abs(deltaY) > 5) {
-    const delay = getCurrentDelay();
+    let targetIndex = currentIndex;
+    let didChange = false;
+
+    // 1. Calculate new index
     if (deltaY < 0 && currentIndex < shorts.length - 1) {
       logPlayTime(currentIndex);
       currentIndex++;
-      if (delay > 0) {
-        gifOverlay.style.display = 'block';
-        updateShorts();
-        setTimeout(() => {
-          gifOverlay.style.display = 'none';
-          playCurrentVideo();
-        }, delay);
-      } else {
-        updateShorts();
-        playCurrentVideo();
-      }
+      didChange = true;
     } else if (deltaY > 0 && currentIndex > 0) {
       logPlayTime(currentIndex);
       currentIndex--;
-      if (delay > 0) {
-        gifOverlay.style.display = 'block';
-        updateShorts();
-        setTimeout(() => {
-          gifOverlay.style.display = 'none';
-          playCurrentVideo();
-        }, delay);
-      } else {
-        updateShorts();
-        playCurrentVideo();
-      }
+      didChange = true;
     } else if (deltaY < 0 && currentIndex === shorts.length - 1) {
+      // Last video - finish
       logPlayTime(currentIndex);
+      const delay = getCurrentDelay();
       if (delay > 0) {
-        gifOverlay.style.display = 'block';
+        gifOverlay.style.display = 'flex'; // Use flex to keep GIF centered
         setTimeout(() => {
           gifOverlay.style.display = 'none';
           showFinishPage();
         }, delay);
       } else {
         showFinishPage();
+      }
+      return; 
+    }
+
+    if (didChange) {
+      const delay = getCurrentDelay();
+      
+      // 2. Update visual slider
+      updateShorts();
+
+      if (delay > 0) {
+        // --- IOS FIX: PRIME THE VIDEO ---
+        // We must play immediately to capture the user gesture.
+        const video = shorts[currentIndex].querySelector('video');
+        if (video) {
+           video.muted = true; // iOS requires mute for autoplay
+           
+           // A. Play immediately (Synchronous start)
+           const p = video.play();
+           if (p !== undefined) {
+             p.then(() => {
+               // B. Immediately PAUSE it. 
+               // This marks the video as "user-interacted" so we can resume it later.
+               video.pause();
+               video.currentTime = 0; 
+             }).catch(e => {
+               console.warn("iOS Prime failed (non-fatal):", e);
+             });
+           }
+        }
+
+        // 3. Show Delay Overlay
+        gifOverlay.style.display = 'flex'; // Use flex to center the GIF
+        
+        // 4. Wait for delay, then RESUME
+        setTimeout(() => {
+          gifOverlay.style.display = 'none';
+          playCurrentVideo(); // This will resume the primed video
+        }, delay);
+
+      } else {
+        // No delay - just play
+        playCurrentVideo();
       }
     }
   }
