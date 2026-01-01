@@ -901,8 +901,16 @@ gifOverlay.style.display = 'none';
 // Set your GIF path here (e.g., 'loading.gif')
 const gifImg = document.createElement('img');
 gifImg.src = 'output.gif';
-gifImg.style.maxWidth = '30vw';
-gifImg.style.maxHeight = '30vh';
+// --- NEW CODE START ---
+// Check if screen width is less than 768px (typical mobile breakpoint)
+if (window.innerWidth < 768) {
+  gifImg.style.maxWidth = '60vw';  // 60% of screen width on Mobile
+  gifImg.style.maxHeight = '60vh';
+} else {
+  gifImg.style.maxWidth = '30vw';  // 30% of screen width on PC
+  gifImg.style.maxHeight = '30vh';
+}
+// --- NEW CODE END ---
 gifImg.style.position = 'absolute';
 gifImg.style.top = '50%';
 gifImg.style.left = '50%';
