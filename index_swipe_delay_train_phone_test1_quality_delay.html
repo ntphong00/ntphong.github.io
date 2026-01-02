@@ -98,7 +98,7 @@
   <div id="shorts-container">
     <div id="swipe-popup">
       <div class="popup-content">
-        <b>scroll down</b>
+        <b>swipe down</b>
       </div>
     </div>
   </div>
@@ -670,18 +670,7 @@ document.addEventListener('mouseup', (e) => {
         if (index === currentIndex) {
           video.currentTime = 0;
           // video.muted = false; // Unmute the current video
-
-          // スマホ自動再生対策: ユーザー操作イベントで再生
-          // 直前のtouchend/mouseupで video.play() を呼ぶ
-          //video.onclick = () => {
-          //  //video.muted = false;
-          //  video.play();
-          //};
-
-          // PCでは自動再生
-          //if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-          //video.play().catch(() => {});
-          //}
+          video.muted = true; // FORCE MUTE
         } else {
           video.pause();
           video.currentTime = 0;
@@ -707,8 +696,8 @@ function playCurrentVideo() {
     if (playPromise !== undefined) {
       playPromise.then(_ => {
         // Playback started successfully!
-        // Try to unmute (might fail on iOS if delay > 0, but video will run)
-        video.muted = false;
+        // REMOVED THE UNMUTE LINE HERE
+        video.muted = true; // Ensure it stays muted
         
         console.log("Video playing successfully");
       })
@@ -808,17 +797,15 @@ function handleSwipe(deltaY) {
 
       if (delay > 0) {
         // --- IOS FIX: PRIME THE VIDEO ---
-        // We must play immediately to capture the user gesture.
         const video = shorts[currentIndex].querySelector('video');
         if (video) {
-           video.muted = true; // iOS requires mute for autoplay
+           video.muted = true; // Always muted
            
            // A. Play immediately (Synchronous start)
            const p = video.play();
            if (p !== undefined) {
              p.then(() => {
                // B. Immediately PAUSE it. 
-               // This marks the video as "user-interacted" so we can resume it later.
                video.pause();
                video.currentTime = 0; 
              }).catch(e => {
