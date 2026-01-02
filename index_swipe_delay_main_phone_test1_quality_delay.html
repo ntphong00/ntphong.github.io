@@ -1379,9 +1379,7 @@ document.addEventListener('mouseup', (e) => {
         const video = short.querySelector('video');
         if (index === currentIndex) {
           video.currentTime = 0;
-          // IMPORTANT FOR IPHONE:
-          // We must initialize as muted. 
-          // If we try to set muted=false here, iOS will block autoplay later.
+          // STRICT MUTE: Always true
           video.muted = true; 
         } else {
           video.pause();
@@ -1430,7 +1428,7 @@ document.addEventListener('mouseup', (e) => {
 //   }
 // }
 // Updated function: Accepts a parameter to skip forced muting
-function playCurrentVideo(forceMuteFirst = true) {
+function playCurrentVideo() {
   const video = shorts[currentIndex]?.querySelector('video');
   
   // Get playback time for this round
@@ -1439,52 +1437,42 @@ function playCurrentVideo(forceMuteFirst = true) {
     : undefined;
 
   if (video) {
-    // 1. Only force mute if we haven't already primed the video
-    if (forceMuteFirst) {
-        video.muted = true;
-    }
+    // 1. FORCE MUTE (Always muted)
+    video.muted = true;
 
-    // 2. Play with Promise handling
+    // 2. Play
     var playPromise = video.play();
 
     if (playPromise !== undefined) {
       playPromise.then(_ => {
-        // Playback started successfully!
-        // Try to unmute. 
-        // If we primed it in handleSwipe, this will work even after delay.
-        video.muted = false; 
+        // Ensure it stays muted even after playing
+        video.muted = true; 
       })
       .catch(error => {
-        // If autoplay blocked, force mute and try again
-        console.warn("Autoplay blocked, forcing mute.");
+        console.log("Autoplay blocked. Forcing mute play.");
         video.muted = true;
         video.play();
       });
     }
 
-    // 3. Fallback: Increased to 200ms (50ms was too fast for some phones)
+    // 3. Fallback check
     setTimeout(() => {
         if (video.paused) {
-            console.log("Fallback: Video was paused, forcing play");
             video.muted = true;
             video.play();
         }
-    }, 200);
+    }, 50);
 
-    // Only run popup logic if we are strictly in the "viewing" mode 
+    // --- POPUP LOGIC ---
     if (
       startPage.style.display === "none" &&
       finishPage.style.display === "none" &&
       (typeof scorePage === 'undefined' || scorePage.style.display === "none")
     ) {
-      // Reset popup logic
       clearTimeout(window._swipePopupTimeout);
       document.getElementById('swipe-popup').style.display = 'none';
-      
-      // Lock swipe immediately
       swipeLocked = true;
 
-      // Set timer to unlock swipe
       if (typeof roundViewTime === 'number' && !isNaN(roundViewTime)) {
         window._swipePopupTimeout = setTimeout(() => {
           document.getElementById('swipe-popup').style.display = 'flex';
@@ -1495,103 +1483,72 @@ function playCurrentVideo(forceMuteFirst = true) {
   }
 }
 // touchend/mouseupで次動画に切り替えた直後に再生
-// Updated function: Includes "Priming" logic for iOS audio
+
 function handleSwipe(deltaY) {
-  // Prevent swipe if locked
-  if (swipeLocked) return;
-  // Hide popup on swipe
-  clearTimeout(window._swipePopupTimeout);
-  document.getElementById('swipe-popup').style.display = 'none';
-  
-  if (isTouch) {
-    deltaY = -deltaY;
-  } else if (mouseDown) {
-    deltaY = -deltaY;
-  }
+      // Prevent swipe if locked
+      if (swipeLocked) return;
+      // Hide popup on swipe
+      clearTimeout(window._swipePopupTimeout);
+      document.getElementById('swipe-popup').style.display = 'none';
+      
+      if (isTouch) {
+        deltaY = -deltaY;
+      } else if (mouseDown) {
+        deltaY = -deltaY;
+      }
 
-  if (Math.abs(deltaY) > 5) {
-    const delay = getCurrentDelay();
-    
-    // --- SWIPE DOWN (Next Video) ---
-    if (deltaY < 0 && currentIndex < shorts.length - 1) {
-      logPlayTime(currentIndex);
-      currentIndex++;
-      if (delay > 0) {
-        gifOverlay.style.display = 'flex'; 
-        updateShorts();
+      if (Math.abs(deltaY) > 5) {
+        const delay = getCurrentDelay();
         
-        // ★ FIX: Prime the video to capture Audio Context immediately
-        const video = shorts[currentIndex].querySelector('video');
-        if(video) {
-            video.muted = false; // Prepare to play with sound
-            let p = video.play();
-            if(p !== undefined) {
-                p.then(() => {
-                    // It started! Pause immediately to wait for the delay.
-                    // The browser now considers this video "user interacted".
-                    video.pause();
-                    video.currentTime = 0;
-                }).catch(e => {
-                    // If immediate play failed, fallback to mute
-                    video.muted = true;
-                });
-            }
+        // --- SWIPE DOWN (Next Video) ---
+        if (deltaY < 0 && currentIndex < shorts.length - 1) {
+          logPlayTime(currentIndex);
+          currentIndex++;
+          
+          if (delay > 0) {
+            gifOverlay.style.display = 'flex'; 
+            updateShorts();
+            setTimeout(() => {
+              gifOverlay.style.display = 'none';
+              playCurrentVideo();
+            }, delay);
+          } else {
+            updateShorts();
+            playCurrentVideo();
+          }
+        
+        // --- SWIPE UP (Previous Video) ---
+        } else if (deltaY > 0 && currentIndex > 0) {
+          logPlayTime(currentIndex);
+          currentIndex--;
+          
+          if (delay > 0) {
+            gifOverlay.style.display = 'flex';
+            updateShorts();
+            setTimeout(() => {
+              gifOverlay.style.display = 'none';
+              playCurrentVideo();
+            }, delay);
+          } else {
+            updateShorts();
+            playCurrentVideo();
+          }
+        
+        // --- LAST VIDEO (Finish) ---
+        } else if (deltaY < 0 && currentIndex === shorts.length - 1) {
+          logPlayTime(currentIndex);
+          if (delay > 0) {
+            gifOverlay.style.display = 'flex';
+            setTimeout(() => {
+              gifOverlay.style.display = 'none';
+              showFinishPage();
+            }, delay);
+          } else {
+            showFinishPage();
+          }
         }
-        // ★ END FIX
-
-        setTimeout(() => {
-          gifOverlay.style.display = 'none';
-          // Pass 'false' so we don't force mute again
-          playCurrentVideo(false); 
-        }, delay);
-      } else {
-        updateShorts();
-        playCurrentVideo(true);
-      }
-    
-    // --- SWIPE UP (Previous Video) ---
-    } else if (deltaY > 0 && currentIndex > 0) {
-      logPlayTime(currentIndex);
-      currentIndex--;
-      if (delay > 0) {
-        gifOverlay.style.display = 'flex';
-        updateShorts();
-
-        // ★ FIX: Prime the video here too
-        const video = shorts[currentIndex].querySelector('video');
-        if(video) {
-            video.muted = false;
-            let p = video.play();
-            if(p !== undefined) {
-                p.then(() => { video.pause(); video.currentTime = 0; }).catch(e => {});
-            }
-        }
-        // ★ END FIX
-
-        setTimeout(() => {
-          gifOverlay.style.display = 'none';
-          playCurrentVideo(false);
-        }, delay);
-      } else {
-        updateShorts();
-        playCurrentVideo(true);
-      }
-    
-    // --- LAST VIDEO (Finish) ---
-    } else if (deltaY < 0 && currentIndex === shorts.length - 1) {
-      logPlayTime(currentIndex);
-      if (delay > 0) {
-        gifOverlay.style.display = 'flex';
-        setTimeout(() => {
-          gifOverlay.style.display = 'none';
-          showFinishPage();
-        }, delay);
-      } else {
-        showFinishPage();
       }
     }
-  }
-}
 
 // Log play time when user leaves the page or finish page is shown
 window.addEventListener('beforeunload', () => {
