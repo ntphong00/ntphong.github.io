@@ -266,8 +266,7 @@
   <div id="progress-text" style="color:#fff;font-size:1.1rem;margin-bottom:16px;text-align:center;">
   </div>
   <p style="color:#fff;font-size:1.2rem;margin-bottom:24px;text-align:center;">
-  Please rate the last test sample:<br>
-  直前のテストサンプルを評価してください：
+  Please rate the last test sample:
   </p>
   <form id="score-form" style="color:#fff;font-size:1.2rem;display:flex;flex-direction:column;align-items:center;">
     <label><input type="radio" name="acr" value="5" required> 5: Excellent </label>
@@ -1068,7 +1067,7 @@ function showFinishPage() {
     } catch (e) {}
   });
   // 評価タイトル更新
-  scorePage.querySelector('h1').innerHTML = `Video Quality Evaluation (Round ${evaluationCount + 1}) <br> ビデオ品質評価（${evaluationCount + 1}回目）`;
+  scorePage.querySelector('h1').innerHTML = `Video Quality Evaluation (Round ${evaluationCount + 1})`;
   updateProgressBar(); // ★ 進捗バー更新
 
   // ★ スマホで画面遷移が反映されない場合の対策
@@ -1122,7 +1121,7 @@ function updateProgressBar() {
   // ★ 進捗テキストも更新
   // ★ 進捗テキストも更新 (Update progress text)
   document.getElementById('progress-text').innerHTML = 
-    `${evaluationCount+1} / ${EVALUATION_REPEAT} Complete <br> ${evaluationCount+1} / ${EVALUATION_REPEAT} 完了`;
+    `${evaluationCount+1} / ${EVALUATION_REPEAT} Complete`;
 }
 
 // スコアページ送信処理
