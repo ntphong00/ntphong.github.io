@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
+  <title>Experiment Selection</title>
+  <style>
+    /* Reset & Base Styles */
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      text-align: center;
+      color: #ccc;
+    }
+
+    /* Group Card Styling */
+    .group-card {
+      background: #111;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px rgba(255, 0, 0, 0.1); /* Subtle red glow */
+      border: 1px solid #333;
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+
+    .group-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .total-time {
+      font-size: 0.9rem;
+      color: #ff4444; /* Accent color */
+      font-weight: 600;
+    }
+
+    /* List of Links */
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .test-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #222;
+      color: #eee;
+      text-decoration: none;
+      padding: 16px;
+      border-radius: 12px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .test-link:active {
+      background: #333;
+      transform: scale(0.98);
+    }
+
+    .part-name {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .part-duration {
+      font-size: 0.85rem;
+      color: #888;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    
+    /* Category Labels */
+    .category-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #666;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Select Your Group</h1>
+
+  <div class="group-card">
+    <div class="group-header">
+      <span class="group-title">Group 1</span>
+      <span class="total-time">Total: 75 min</span>
+    </div>
+
+    <div class="link-list">
+      
+      <div class="category-label">Delay Part</div>
+      <a href="index_main_phone_delay_test2.1.html" class="test-link">
+        <span class="part-name">Part 2.1</span>
+        <span class="part-duration">16 min</span>
+      </a>
+
+      <div class="category-label">Quality Part</div>
+      <a href="index_main_phone_quality_test2.html" class="test-link">
+        <span class="part-name">Part 2</span>
+        <span class="part-duration">17 min</span>
+      </a>
+
+      <div class="category-label">Quality & Delay Part</div>
+      <a href="index_main_phone_quality&delay_test1.1.html" class="test-link">
+        <span class="part-name">Part 1.1</span>
+        <span class="part-duration">11 min</span>
+      </a>
+
+      <a href="index_main_phone_quality&delay_test2.1.html" class="test-link">
+        <span class="part-name">Part 2.1</span>
+        <span class="part-duration">31 min</span>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="group-card">
+    <div class="group-header">
+      <span class="group-title">Group 2</span>
+      <span class="total-time">Total: 75 min</span>
+    </div>
+
+    <div class="link-list">
+      
+      <div class="category-label">Delay Part</div>
+      <a href="index_main_phone_delay_test1.html" class="test-link">
+        <span class="part-name">Part 1</span>
+        <span class="part-duration">12 min</span>
+      </a>
+
+      <a href="index_main_phone_delay_test2.2.html" class="test-link">
+        <span class="part-name">Part 2.2</span>
+        <span class="part-duration">15 min</span>
+      </a>
+
+      <div class="category-label">Quality Part</div>
+      <a href="index_main_phone_quality_test1.html" class="test-link">
+        <span class="part-name">Part 1</span>
+        <span class="part-duration">6 min</span>
+      </a>
+
+      <div class="category-label">Quality & Delay Part</div>
+      <a href="index_main_phone_quality&delay_test1.2.html" class="test-link">
+        <span class="part-name">Part 1.2</span>
+        <span class="part-duration">11 min</span>
+      </a>
+
+      <a href="index_main_phone_quality&delay_test2.2.html" class="test-link">
+        <span class="part-name">Part 2.2</span>
+        <span class="part-duration">31 min</span>
+      </a>
+
+    </div>
+  </div>
+
+</body>
+</html>

@@ -230,6 +230,8 @@
     <input id="age-input" type="number" min="1" max="120" required style="font-size:1.2rem;padding:8px 12px;border-radius:8px;border:none;margin-bottom:20px;width:200px;">
     <label style="color:#fff;font-size:1.2rem;margin-bottom:8px;" for="exp-input">Experience with short video services (years):</label>
     <input id="exp-input" type="number" min="0" max="50" step="0.1" required style="font-size:1.2rem;padding:8px 12px;border-radius:8px;border:none;margin-bottom:32px;width:200px;">
+    <label style="color:#fff;font-size:1.2rem;margin-bottom:8px;" for="device-input">Device name:</label>
+    <input id="device-input" type="text" required style="font-size:1.2rem;padding:8px 12px;border-radius:8px;border:none;margin-bottom:32px;width:200px;">
     <button id="start-btn" style="font-size:2rem;padding:16px 48px;border-radius:12px;border:none;background:#ff0000;color:#fff;cursor:pointer;">Start</button>
   </div>
   <div id="shorts-container" style="display:none;">
@@ -798,17 +800,19 @@
     });
 
     document.getElementById('start-btn').onclick = function() {
-    // Always hide popup when showing start page
-    clearTimeout(window._swipePopupTimeout);
-    document.getElementById('swipe-popup').style.display = 'none';
-      // Get name, age and experience values
+      // Always hide popup when showing start page
+      clearTimeout(window._swipePopupTimeout);
+      document.getElementById('swipe-popup').style.display = 'none';
+      
+      // Get name, age, experience, and NEW device values
       const name = document.getElementById('name-input').value.trim();
       const age = document.getElementById('age-input').value.trim();
       const exp = document.getElementById('exp-input').value.trim();
+      const device = document.getElementById('device-input').value.trim(); // ★ NEW
 
-      // 入力チェック：いずれかが空なら進まない
-      if (!name || !age || !exp) {
-        alert('Please input your name, age, and experience before starting.');
+      // Check if any field is empty
+      if (!name || !age || !exp || !device) { // ★ Update check
+        alert('Please input your name, age, experience, and device name before starting.');
         return;
       }
 
@@ -816,12 +820,14 @@
       logAndBuffer('User Name:', name);
       logAndBuffer('User Age:', age);
       logAndBuffer('Experience (years):', exp);
+      logAndBuffer('Device Name:', device); // ★ Log the new data
+      
       startPage.style.display = 'none';
       shortsContainer.style.display = '';
 
       restartPlayback();
       setTimeout(() => {
-        playCurrentVideo(); // Ensure popup timer starts for first video
+        playCurrentVideo(); 
       }, 0);
     };
 

@@ -133,7 +133,7 @@
   </div>
 
   <div id="finish-page" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:20001;flex-direction:column;justify-content:center;align-items:center;">
-    <a href="index_swipe_delay_main_phone_test1_quality_delay.html" style="font-size:2rem;padding:24px 48px;border-radius:16px;background:#ff0000;color:#fff;text-decoration:none;box-shadow:0 2px 16px rgba(0,0,0,0.3);">
+    <a href="index_opening.html" style="font-size:2rem;padding:24px 48px;border-radius:16px;background:#ff0000;color:#fff;text-decoration:none;box-shadow:0 2px 16px rgba(0,0,0,0.3);">
       Go to main evaluation page
     </a>
   </div>
@@ -427,7 +427,7 @@ function showFinishPage() {
     } catch (e) {}
   });
   // 評価タイトル更新
-  scorePage.querySelector('h1').textContent = `動画の品質評価 (${evaluationCount + 1}回目)`;
+  scorePage.querySelector('h1').innerHTML = `Video Quality Evaluation (Round ${evaluationCount + 1})`;
   updateProgressBar(); // ★ 進捗バー更新
 
   // ★ スマホで画面遷移が反映されない場合の対策
@@ -478,7 +478,7 @@ function updateProgressBar() {
   document.getElementById('progress-bar').style.width = percent + '%';
   // ★ 進捗テキストも更新
   document.getElementById('progress-text').textContent =
-    `${evaluationCount+1} / ${EVALUATION_REPEAT} 完了`;
+    `${evaluationCount+1} / ${EVALUATION_REPEAT} Complete`;
 }
 
 // スコアページ送信処理
